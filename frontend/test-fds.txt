@@ -1,0 +1,15 @@
+HMI SCREEN: SIMPLE TEST DASHBOARD
+================================
+
+SCREEN PURPOSE:
+This is a simple test HMI screen for factory monitoring.
+
+REQUIRED ELEMENTS:
+- Start button (top left)
+- Stop button (top right) 
+- Status display (center)
+- Temperature gauge (bottom left)
+- Pressure indicator (bottom right)
+
+LAYOUT: Grid 2x2
+COLORS: Blue theme 
