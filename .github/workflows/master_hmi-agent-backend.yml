@@ -29,22 +29,20 @@ jobs:
         run: |
           cd backend
           npm install
-          npm run build --if-present
-          
+          # ✅ Remove build step - no build script exists
+          # npm run build --if-present
           
       - name: Zip artifact for deployment
         run: |
-          # ✅ Create a structure with backend folder
-          mkdir -p deployment/backend
-          cp -r backend/* deployment/backend/
-          cd deployment
+          # ✅ Deploy backend contents directly to root
+          cd backend
           zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: deployment/release.zip
+          path: backend/release.zip
 
   deploy:
     runs-on: ubuntu-latest

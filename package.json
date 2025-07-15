@@ -3,7 +3,7 @@
   "scripts": {
     "start": "cd backend && npm start",
     "install": "cd backend && npm install",
-    "start:azure": "npm start",
+    "start:azure": "node server.js",
     "install:azure": "npm install"
   }
 }
