@@ -1,0 +1,110 @@
+HMI SCREEN: PRODUCTION DASHBOARD
+================================
+
+SCREEN PURPOSE:
+This HMI screen is designed for factory floor operators to monitor and control the production line in real-time. The screen should provide clear visibility of all critical production parameters and allow quick response to any issues.
+
+REQUIRED ELEMENTS:
+
+1. HEADER SECTION (Top of screen):
+   - Company logo (left side)
+   - Screen title "Production Dashboard" (center)
+   - Current date and time (right side)
+   - User login status indicator
+
+2. PRODUCTION STATUS DISPLAY (Center-left):
+   - Production line status (Running/Stopped/Error)
+   - Current production count
+   - Target production count
+   - Efficiency percentage
+   - Shift information (1st/2nd/3rd shift)
+
+3. REAL-TIME MONITORING (Center):
+   - Temperature gauge (0-100°C)
+   - Pressure indicator (0-50 bar)
+   - Speed monitor (0-100 RPM)
+   - Quality metrics display
+   - Current product being manufactured
+
+4. CONTROL PANEL (Center-right):
+   - START button (green, large)
+   - STOP button (red, large)
+   - PAUSE button (yellow, medium)
+   - RESET button (blue, medium)
+   - Emergency STOP (red, extra large, prominent)
+
+5. ALERT SECTION (Top-right):
+   - Error messages display
+   - Warning notifications
+   - Maintenance alerts
+   - Quality alerts
+   - System status indicators
+
+6. NAVIGATION (Bottom):
+   - Home button
+   - Settings button
+   - Reports button
+   - Help button
+   - Logout button
+
+LAYOUT SPECIFICATIONS:
+- Grid layout: 3 columns x 4 rows
+- Screen resolution: 1920x1080
+- Orientation: Landscape
+- Responsive design for different screen sizes
+
+COLOR SCHEME:
+- Primary: Professional blue (#2563eb)
+- Secondary: Dark gray (#374151)
+- Background: Light gray (#f3f4f6)
+- Text: Dark gray (#111827)
+- Success: Green (#10b981)
+- Warning: Yellow (#f59e0b)
+- Error: Red (#ef4444)
+- Info: Blue (#3b82f6)
+
+INTERACTIONS:
+- All buttons should provide visual feedback when pressed
+- Status indicators should blink when in warning/error state
+- Real-time data should update every 5 seconds
+- Emergency STOP should be accessible with one click
+- Navigation buttons should be clearly visible and easy to reach
+
+DATA FIELDS:
+- Production count (number, required)
+- Temperature (number, 0-100, required)
+- Pressure (number, 0-50, required)
+- Speed (number, 0-100, required)
+- Efficiency (percentage, 0-100, required)
+- Shift number (1, 2, or 3, required)
+- Current time (timestamp, required)
+- User ID (text, required)
+
+VALIDATION RULES:
+- Temperature must be between 0-100°C
+- Pressure must be between 0-50 bar
+- Speed must be between 0-100 RPM
+- Efficiency must be between 0-100%
+- All required fields must be filled
+
+ACCESSIBILITY REQUIREMENTS:
+- High contrast for readability
+- Large touch targets (minimum 44px)
+- Clear visual hierarchy
+- Screen reader compatible
+- Keyboard navigation support
+- Color-blind friendly design
+
+PERFORMANCE REQUIREMENTS:
+- Screen should load within 3 seconds
+- Real-time updates should not cause lag
+- All interactions should respond within 1 second
+- Screen should work in various lighting conditions
+- Touch interface should be responsive
+
+SAFETY REQUIREMENTS:
+- Emergency STOP must be prominently displayed
+- Critical alerts must be immediately visible
+- No critical functions should be hidden
+- Clear visual feedback for all actions
+- Fail-safe design for critical operations 

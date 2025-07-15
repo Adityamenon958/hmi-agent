@@ -1,0 +1,535 @@
+FUNCTIONAL DESIGN SPECIFICATION
+GENERATOR CONTROL SYSTEM HMI
+Version 1.0
+================================
+
+Table of Contents
+1. INTRODUCTION
+2. HMI SYSTEM OVERVIEW
+3. USER INTERFACE SCREENS
+   3.1 MAIN DASHBOARD
+   3.2 GENERATOR CONTROL
+   3.3 MAINTENANCE & SETTINGS
+4. ALARM MANAGEMENT
+5. USER ACCESS LEVELS
+6. TECHNICAL SPECIFICATIONS
+
+=====================================
+
+1. INTRODUCTION
+
+This Functional Design Specification (FDS) provides detailed instructions for designing and developing a Human Machine Interface (HMI) system for a Standby Generator Control System. The HMI interfaces with the generator controller and building management systems to provide reliable backup power control and monitoring.
+
+Purpose: This document outlines the generator monitoring and control system for a commercial/industrial facility, ensuring automatic backup power during utility outages and proper maintenance scheduling.
+
+Target Application: 500kW - 2MW standby diesel generator system for commercial buildings, hospitals, data centers, or manufacturing facilities.
+
+2. HMI SYSTEM OVERVIEW
+
+Hardware and Software specifications:
+• HMI Hardware: 10" Industrial Touch Panel with Ethernet and RS-485
+• Operating System: Windows 10 IoT Enterprise 
+• Screen Resolution: 1280x800 (16:10 aspect ratio)
+• Communication Protocol: Modbus RTU/TCP, CAN Bus
+• Data Logging: Local storage with cloud backup capability
+• Environmental Rating: IP65 for outdoor installation
+
+3. USER INTERFACE SCREENS
+
+The interface consists of 3 main screens providing complete generator system control. System boots directly to Main Dashboard with navigation between screens via bottom menu bar.
+
+3.1 MAIN DASHBOARD
+
+Screen Title: GENERATOR SYSTEM OVERVIEW
+
+Screen Purpose: 
+Primary monitoring screen showing real-time generator status, power parameters, and system health indicators.
+
+Layout:
+- Type: dashboard grid layout
+- Columns: 3
+- Rows: 4
+- Orientation: landscape
+
+Color Scheme:
+- Primary: #1B4332 (Dark forest green)
+- Secondary: #2D6A4F (Medium green)
+- Background: #F1F3F4 (Light gray)
+- Text: #212529 (Dark gray)
+- Status Colors: #28A745 (Green), #FFC107 (Yellow), #DC3545 (Red)
+
+Required Elements:
+
+HEADER SECTION (Row 1):
+- Generator system logo (left)
+- Current date and time (center)
+- System status indicator: AUTO/MANUAL/OFF (right)
+- Overall health status: READY/RUNNING/FAULT (top right corner)
+
+POWER PARAMETERS (Row 2):
+Left Column:
+- AC Output Voltage: L1-L2, L2-L3, L3-L1 (480V nominal)
+- AC Output Current: Per phase (Amps)
+- AC Output Frequency: 60Hz ±0.5Hz
+- Power Factor: Leading/Lagging indication
+
+Center Column:
+- Real Power Output: kW (digital display with bar graph)
+- Apparent Power: kVA 
+- Load Percentage: % of rated capacity
+- Energy Generated: kWh (daily/total counters)
+
+Right Column:
+- Utility Status: NORMAL/OUTAGE (with voltage reading)
+- Transfer Switch Position: UTILITY/GENERATOR/NEUTRAL
+- Load Bank Status: CONNECTED/DISCONNECTED
+- Sync Status: IN SYNC/OUT OF SYNC
+
+ENGINE PARAMETERS (Row 3):
+Left Column:
+- Engine Speed: RPM (1800 nominal)
+- Engine Temperature: °F with normal range indicator
+- Oil Pressure: PSI with low pressure alarm
+- Fuel Level: % with estimated runtime
+
+Center Column:
+- Battery Voltage: 12V/24V system voltage
+- Coolant Temperature: °F with overheat protection
+- Air Filter Condition: Clean/Dirty/Replace
+- Exhaust Temperature: °F post-turbo
+
+Right Column:
+- Vibration Level: Good/Caution/High
+- Belt Tension: Proper/Loose/Tight
+- Alternator Temperature: °F
+- Turbo Boost: PSI (if applicable)
+
+STATUS INDICATORS (Row 4):
+- Engine Status: OFF/STARTING/RUNNING/STOPPING
+- Alarms Active: Count with highest priority level
+- Maintenance Due: Days until next service
+- Runtime Hours: Since last reset
+- Start Counter: Number of starts this month
+- Last Test Date: Monthly test date and result
+
+NAVIGATION BAR (Bottom):
+- Dashboard button (active/highlighted)
+- Generator Control button
+- Maintenance button
+- Alarms button (with active alarm count)
+- Settings button
+
+Data Fields:
+- AC Voltage (number, 0-600V)
+- AC Current (number, 0-2000A)
+- AC Frequency (number, 58-62Hz)
+- Power Output (number, 0-2000kW)
+- Engine RPM (number, 0-2000)
+- Engine Temperature (number, 0-250°F)
+- Oil Pressure (number, 0-80PSI)
+- Fuel Level (percentage, 0-100%)
+
+Auto-Refresh: All data updates every 2 seconds
+
+3.2 GENERATOR CONTROL
+
+Screen Title: GENERATOR CONTROL & OPERATION
+
+Screen Purpose: 
+Detailed control screen for manual generator operation, testing, and load management.
+
+Layout:
+- Type: control panel layout
+- Sections: Manual Control | Auto Control | Load Management | Testing
+
+Color Scheme: Same as Main Dashboard
+
+MANUAL CONTROL SECTION (Left Side):
+Operating Mode Selector:
+- AUTO: Automatic start on utility failure
+- MANUAL: Manual start/stop control
+- OFF: System disabled
+- TEST: Manual test mode
+
+Manual Controls:
+- START Button: Large green button (150x60px)
+- STOP Button: Large red button (150x60px)
+- EMERGENCY STOP: Red mushroom button (100x100px)
+- RESET Button: Yellow button (100x40px)
+
+Engine Controls:
+- Pre-heat: ON/OFF toggle (cold weather)
+- Block Heater: ON/OFF status
+- Fuel Pump: Manual ON/OFF control
+- Coolant Pump: Manual control
+
+Transfer Switch Controls:
+- Manual Transfer: UTILITY/GENERATOR selector
+- Transfer Override: Emergency override button
+- Paralleling: ENABLE/DISABLE (if applicable)
+- Load Shed: Manual load disconnect
+
+AUTO CONTROL SECTION (Center):
+Automatic Settings:
+- Start Delay: 0-300 seconds (adjustable)
+- Warm-up Time: 0-600 seconds
+- Cool-down Time: 0-1800 seconds
+- Transfer Delay: 0-60 seconds
+
+Auto Start Triggers:
+- Utility Voltage Low: <420V (adjustable)
+- Utility Frequency Low: <58Hz (adjustable)
+- Utility Voltage High: >520V (adjustable)
+- Manual Start Signal: External contact
+- Fire Alarm Input: Emergency start
+- UPS Battery Low: Data center application
+
+Auto Stop Conditions:
+- Utility Restored: With time delay
+- Emergency Stop Activated
+- Critical Engine Fault
+- Fuel Level Critical Low
+- Manual Stop Command
+
+LOAD MANAGEMENT (Right Side):
+Load Priority Levels:
+- Priority 1: Critical loads (always on)
+- Priority 2: Important loads (shed at 80%)
+- Priority 3: Non-essential (shed at 60%)
+- Priority 4: Comfort loads (shed at 40%)
+
+Load Shed Controls:
+- Automatic Load Shed: ENABLED/DISABLED
+- Manual Load Shed: Individual circuit control
+- Load Restoration: Automatic sequencing
+- Peak Shaving: Demand limiting
+
+Current Load Status:
+- Total Load: kW and % of capacity
+- Load per Priority: Individual percentages
+- Shed Status: Which loads are currently off
+- Available Capacity: Remaining generator capacity
+
+TESTING SECTION (Bottom):
+Test Schedule:
+- Weekly Test: Day/time setting
+- Monthly Test: Day/time setting
+- Annual Test: Full load test scheduling
+- Custom Test: Manual test initiation
+
+Test Controls:
+- Start Test: Begin scheduled test
+- Stop Test: End test early
+- Test Duration: 0-120 minutes
+- Test Load: 0-100% (load bank required)
+
+Test Results:
+- Last Test Date: Date and duration
+- Test Result: PASS/FAIL status
+- Issues Found: Brief description
+- Next Test Due: Countdown timer
+
+Required Elements per Section:
+- Mode selector: 3-position switch visualization
+- Control buttons: Touch-optimized sizing
+- Status indicators: Color-coded LED style
+- Setting sliders: For time delays
+- Load meters: Bar graph displays
+- Test scheduler: Calendar interface
+
+Interactions:
+- Single-touch for immediate actions
+- Double-touch confirmation for critical actions
+- Hold-to-confirm for emergency stops
+- Slider adjustment for time settings
+- Toggle switches for on/off functions
+
+Safety Features:
+- Emergency stop always visible and accessible
+- Critical action confirmations
+- Interlock status displayed
+- Safety warnings for manual operation
+- Override confirmation dialogs
+
+3.3 MAINTENANCE & SETTINGS
+
+Screen Title: MAINTENANCE & SYSTEM SETTINGS
+
+Screen Purpose: 
+Maintenance scheduling, system configuration, alarm management, and user settings.
+
+Layout:
+- Type: tabbed interface
+- Tabs: Maintenance | System Settings | Alarms | Users
+
+Color Scheme: Same as Main Dashboard
+
+MAINTENANCE TAB:
+Maintenance Schedule Display:
+- Service Due: Days until next service
+- Service Type: Oil change, filter replacement, etc.
+- Hours Since Service: Engine runtime hours
+- Service History: Last 10 maintenance events
+- Parts Inventory: Critical spare parts status
+
+Maintenance Items:
+1. Engine Oil Change: Every 250 hours
+   - Current Hours: Running counter
+   - Oil Type: Specification display
+   - Last Changed: Date and technician
+   - Next Due: Date calculation
+
+2. Air Filter Replacement: Every 500 hours
+   - Filter Condition: Clean/Dirty/Replace
+   - Restriction Level: inches H2O
+   - Last Changed: Date record
+   - Part Number: Filter specification
+
+3. Fuel Filter Replacement: Every 500 hours
+   - Filter Status: Good/Replace
+   - Water Separator: Drain required indicator
+   - Last Changed: Date record
+   - Part Number: Filter specification
+
+4. Coolant Service: Every 1000 hours
+   - Coolant Level: OK/Low/Add
+   - Coolant Condition: Good/Replace
+   - Last Service: Date and type
+   - Freeze Protection: Temperature rating
+
+5. Battery Service: Every 6 months
+   - Battery Voltage: 12V/24V reading
+   - Battery Condition: Good/Weak/Replace
+   - Last Service: Date and action
+   - Charger Status: Charging/Float/Fault
+
+6. Load Bank Test: Monthly
+   - Last Test Date: Date and duration
+   - Test Result: Pass/Fail/Partial
+   - Issues Found: Description
+   - Next Test: Scheduled date
+
+Maintenance Controls:
+- Reset Service Timer: After maintenance completion
+- Add Maintenance Note: Text entry field
+- Schedule Service: Calendar interface
+- Parts Order: Generate parts list
+- Service Report: Generate maintenance report
+
+SYSTEM SETTINGS TAB:
+Generator Configuration:
+- Rated Power: kW capacity setting
+- Voltage Rating: 480V/240V/208V
+- Frequency: 50Hz/60Hz selection
+- Number of Phases: 3-phase standard
+- Power Factor: Leading/Lagging/Unity
+
+Engine Parameters:
+- Rated Speed: 1800/1500 RPM
+- Cooling System: Air/Liquid type
+- Fuel Type: Diesel/Natural Gas/Propane
+- Fuel Capacity: Gallons capacity
+- Estimated Runtime: Hours at full load
+
+Transfer Switch Settings:
+- Transfer Type: Open/Closed transition
+- Transfer Time: Delay settings
+- Retransfer Time: Delay settings
+- Voltage Sensing: Pickup/dropout voltages
+- Frequency Sensing: Pickup/dropout frequencies
+
+Communication Settings:
+- Modbus Address: 1-247 setting
+- Baud Rate: 9600/19200/38400
+- Data Bits: 7/8 bits
+- Stop Bits: 1/2 bits
+- Parity: None/Even/Odd
+
+Network Settings:
+- IP Address: Static IP configuration
+- Subnet Mask: Network configuration
+- Gateway: Default gateway
+- DNS Server: Primary/secondary DNS
+- Port Settings: TCP/UDP port configuration
+
+ALARMS TAB:
+Alarm Configuration:
+- Alarm Priorities: Critical/High/Medium/Low
+- Alarm Actions: Audio/Visual/Email/SMS
+- Alarm Delays: Time delays before activation
+- Alarm Acknowledgment: Manual/Auto requirements
+- Alarm Escalation: Notification hierarchy
+
+Critical Alarms (Red):
+1. Emergency Stop Activated
+2. Engine Overheat (>220°F)
+3. Low Oil Pressure (<20 PSI)
+4. Overspeed (>2000 RPM)
+5. Generator Overcurrent (>110% rated)
+6. Fuel Level Critical Low (<10%)
+7. Battery Charger Failure
+8. Fire Alarm Input Active
+
+High Priority Alarms (Orange):
+1. High Engine Temperature (>200°F)
+2. Low Fuel Level (<25%)
+3. Air Filter Restriction High
+4. Generator Underfrequency (<58Hz)
+5. Generator Overvoltage (>520V)
+6. Transfer Switch Failure
+7. Coolant Level Low
+8. Maintenance Overdue
+
+Medium Priority Alarms (Yellow):
+1. Battery Voltage Low
+2. Fuel Filter Restriction
+3. High Exhaust Temperature
+4. Vibration Level High
+5. Alternator Temperature High
+6. Load Bank Disconnected
+7. Test Overdue
+8. Minor Oil Leak
+
+Low Priority Alarms (Blue):
+1. Weekly Test Due
+2. Service Reminder
+3. Low Coolant Temperature
+4. Communication Timeout
+5. Data Log Full
+6. Utility Voltage Variation
+7. Engine Block Heater On
+8. Manual Mode Active
+
+Alarm Controls:
+- Acknowledge All: Clear all active alarms
+- Silence Horn: Mute audio alarm
+- Test Alarms: Verify alarm functions
+- Alarm History: View last 100 alarms
+- Export Alarms: Generate alarm report
+
+USERS TAB:
+User Management:
+- Current Users: List of active accounts
+- User Privileges: View/Control/Admin levels
+- Password Policy: Complexity requirements
+- Session Timeout: Auto-logout timer
+- Login History: Recent access log
+
+User Levels:
+LEVEL 1 - VIEWER:
+- View all screens (read-only)
+- Acknowledge alarms
+- Generate reports
+- Cannot: Control generator, modify settings
+
+LEVEL 2 - OPERATOR:
+- All Viewer privileges plus:
+- Manual start/stop generator
+- Manual transfer switch control
+- Reset non-critical alarms
+- Perform routine tests
+- Cannot: Modify settings, add users
+
+LEVEL 3 - ADMINISTRATOR:
+- All Operator privileges plus:
+- Modify all system settings
+- Add/remove users
+- Reset all alarms
+- Calibrate instruments
+- Access maintenance functions
+- System configuration changes
+
+User Controls:
+- Add User: Create new account
+- Delete User: Remove account
+- Change Password: Update credentials
+- Modify Privileges: Change access level
+- Lock Account: Temporarily disable
+
+4. ALARM MANAGEMENT
+
+ALARM DISPLAY:
+Real-time alarm banner at top of all screens showing:
+- Active Alarm Count: Number of unacknowledged alarms
+- Highest Priority: Critical/High/Medium/Low
+- Most Recent: Latest alarm description
+- Alarm Horn: Audio indicator status
+- Acknowledge Button: Clear alarms
+
+ALARM RESPONSE:
+- Audio Horn: Sounds for Critical and High priority
+- Visual Indication: Flashing red border on screen
+- Email Notification: For Critical alarms (configurable)
+- SMS Notification: For Emergency Stop only
+- Auto-Acknowledgment: Low priority alarms after 5 minutes
+
+5. USER ACCESS LEVELS
+
+ACCESS CONTROL:
+- Automatic Login: For single-user systems
+- Manual Login: Username/password required
+- Session Management: Auto-logout after inactivity
+- Failed Login Protection: Account lockout after 3 attempts
+- Password Expiration: 90-day requirement for Admin level
+
+6. TECHNICAL SPECIFICATIONS
+
+HARDWARE REQUIREMENTS:
+- Screen Size: 10" diagonal minimum
+- Resolution: 1280x800 pixels minimum
+- Touch Technology: Capacitive multi-touch
+- Brightness: 400 cd/m² minimum
+- Operating Temperature: -20°C to +60°C
+- Storage Temperature: -30°C to +70°C
+- Humidity: 0-95% non-condensing
+- Vibration: 2G at 10-500Hz
+- Shock: 15G for 11ms
+
+SOFTWARE REQUIREMENTS:
+- Operating System: Windows 10 IoT Enterprise LTSC
+- Runtime Environment: .NET Framework 4.7.2
+- Database: SQLite for local storage
+- Communication Drivers: Modbus RTU/TCP, CAN Bus
+- Screen Update Rate: 2 seconds for critical parameters
+- Data Logging: 1-year minimum storage
+- Backup: Daily automatic backup to cloud
+
+COMMUNICATION PROTOCOLS:
+- Modbus RTU: RS-485 connection to generator controller
+- Modbus TCP: Ethernet connection for remote monitoring
+- CAN Bus: Direct engine data communication
+- SNMP: Network monitoring integration
+- Email: SMTP for alarm notifications
+- SMS: GSM modem for critical alerts
+
+PERFORMANCE SPECIFICATIONS:
+- Boot Time: <30 seconds from power on
+- Screen Response: <500ms touch response
+- Data Update: 2-second refresh rate
+- Alarm Response: <1 second notification
+- Network Response: <5 seconds for remote commands
+- Memory Usage: <2GB RAM maximum
+- Storage Usage: <10GB for 1-year data retention
+
+COLOR ACCESSIBILITY:
+- High contrast modes available
+- Color-blind friendly indicators
+- Alternative text/symbol indicators
+- Adjustable brightness levels
+- Night mode with reduced brightness
+
+SAFETY COMPLIANCE:
+- UL Listed for industrial applications
+- NEMA 4X environmental rating
+- CE marking for European compliance
+- FCC Class A emissions compliance
+- NFPA 110 emergency power systems standard
+- IEEE 1547 interconnection standard
+
+END OF DOCUMENT
+===============================================
+Document Version: 1.0
+Date Created: [Current Date]
+Created By: HMI Design Team
+Application: Generator Control System
+Review Cycle: Annual or after major changes 

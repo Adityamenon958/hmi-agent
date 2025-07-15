@@ -1,0 +1,22 @@
+Screen Title: PUMP CONTROL STATION
+
+Screen Purpose: 
+This screen allows operators to monitor and control water pumps in real time.
+
+Layout:
+- Type: grid
+- Columns: 3
+- Rows: 4
+- Orientation: landscape
+
+Required Elements:
+- 3x Pump Status Indicators
+- 3x START/STOP Buttons
+- 1x Emergency Stop Button
+- 1x Flow Rate Display
+
+Element Details:
+- Status Indicator: circle, 40x40px, color: #00FF00 (green) or #FF0000 (red)
+- START Button: rectangle, 120x50px, color: #00AA00, text: "START"
+- STOP Button: rectangle, 120x50px, color: #AA0000, text: "STOP"
+- Emergency Stop: circle, 80x80px, color: #FF0000, text: "E-STOP" 
