@@ -15,6 +15,18 @@ const dotenv = require('dotenv');
 // ✅ Load environment variables
 dotenv.config();
 
+// ✅ Validate required environment variables
+const requiredEnvVars = ['OPENAI_API_KEY'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+    console.error('❌ Missing required environment variables:', missingEnvVars);
+    console.error('❌ Please set these variables in Azure App Service Configuration');
+    process.exit(1);
+}
+
+console.log('✅ All required environment variables are set');
+
 // ✅ ES module fixes
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
@@ -194,13 +206,23 @@ const upload = multer({
 });
 
 // ✅ Create uploads directory if it doesn't exist
-if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
+try {
+    if (!fs.existsSync('uploads')) {
+        fs.mkdirSync('uploads', { recursive: true });
+        console.log('✅ Created uploads directory');
+    }
+} catch (error) {
+    console.error('❌ Error creating uploads directory:', error);
 }
 
 // ✅ Create outputs directory if it doesn't exist
-if (!fs.existsSync('outputs')) {
-    fs.mkdirSync('outputs');
+try {
+    if (!fs.existsSync('outputs')) {
+        fs.mkdirSync('outputs', { recursive: true });
+        console.log('✅ Created outputs directory');
+    }
+} catch (error) {
+    console.error('❌ Error creating outputs directory:', error);
 }
 
 // ✅ FIXED: Explicit image route with CORS headers
@@ -454,11 +476,28 @@ app.use((error, req, res, next) => {
     });
 });
 
-// ✅ Start server
-app.listen(PORT, () => {
+// ✅ Start server with error handling
+const server = app.listen(PORT, () => {
     console.log(`🚀 HMI AI Agent server running on port ${PORT}`);
     console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
     console.log(`🎨 Ready to generate HMI designs!`);
+    console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔑 OpenAI API Key: ${process.env.OPENAI_API_KEY ? 'Set' : 'MISSING!'}`);
+});
+
+// ✅ Handle server errors
+server.on('error', (error) => {
+    console.error('❌ Server error:', error);
+    if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use`);
+    }
+    process.exit(1);
+});
+
+// ✅ Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    process.exit(1);
 });
 
 module.exports = app;

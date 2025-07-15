@@ -25,12 +25,13 @@ jobs:
         cd backend
         npm ci
     
-    - name: Build the app
-      run: |
-        cd backend
-        npm run build
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    # ✅ Remove build step - no build script exists
+    # - name: Build the app
+    #   run: |
+    #     cd backend
+    #     npm run build
+    #   env:
+    #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
