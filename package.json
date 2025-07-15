@@ -1,7 +1,9 @@
 {
-    "name": "hmi-agent",
-    "scripts": {
-      "start": "cd backend && npm start",
-      "install": "cd backend && npm install"
-    }
+  "name": "hmi-agent",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "install": "cd backend && npm install",
+    "start:azure": "npm start",
+    "install:azure": "npm install"
   }
+}
