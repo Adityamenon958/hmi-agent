@@ -1,0 +1,7 @@
+{
+    "name": "hmi-agent",
+    "scripts": {
+      "start": "cd backend && npm start",
+      "install": "cd backend && npm install"
+    }
+  }
