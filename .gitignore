@@ -67,4 +67,21 @@ out/
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
+
+# Generated files
+outputs/
+uploads/
+
+# Documentation files
+*.docx
+*.pdf
+*.xlsx
+*.GTX
+*.txt
+!package.json
+!package-lock.json
+!README.md
+
+# Old backend folder (if exists)
+backend/ 
