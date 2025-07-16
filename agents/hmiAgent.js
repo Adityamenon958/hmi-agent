@@ -5,8 +5,17 @@ const path = require('path');
 // const { dirname } = require('path');
 const { updateCostTracking } = require('../server.js');
 const OpenAI = require('openai');
-// const { createCanvas, loadImage, registerFont } = require('canvas');
-const { createCanvas } = require('canvas');
+
+// ✅ Canvas with fallback for Azure compatibility
+let createCanvas;
+try {
+    const canvas = require('canvas');
+    createCanvas = canvas.createCanvas;
+    console.log('✅ Canvas loaded successfully');
+} catch (error) {
+    console.log('⚠️ Canvas not available, using fallback mode');
+    createCanvas = null;
+}
 
 // const __filename = fileURLToPath(__filename);
 // const __dirname = dirname(__filename);
@@ -1897,6 +1906,60 @@ RESPOND ONLY WITH VALID JSON:`;
     // ✅ Step 2: Generate single comprehensive screen layout (UPDATED - removed screen count step)
     async generateScreenImages() {
         this.updateProgress('screen-generation', '🎨 Step 2: Generating enhanced screen layouts (Individual + Combined)...');
+        
+        // ✅ Check if canvas is available
+        if (!createCanvas) {
+            this.updateProgress('screen-generation', '⚠️ Canvas not available, providing specifications only...');
+            
+            // FIX: Use screenAnalysis directly as an array
+            const screens = this.sessionData.screenAnalysis;
+            if (!Array.isArray(screens)) {
+                throw new Error('Screen analysis is not an array!');
+            }
+            
+            // Generate specifications only
+            const screenSpecs = [];
+            for (let i = 0; i < screens.length; i++) {
+                const screen = screens[i];
+                this.updateProgress('screen-generation', `📋 Generating spec for screen ${i + 1}: ${screen.screenName}`);
+                
+                try {
+                    const screenSpec = await this.generateScreenSpecification(screen);
+                    screenSpecs.push(screenSpec);
+                } catch (error) {
+                    console.error(`❌ Error generating spec for ${screen.screenName}:`, error);
+                    screenSpecs.push({
+                        screenTitle: screen.screenName,
+                        error: error.message
+                    });
+                }
+            }
+            
+            return {
+                screenAnalysis: this.sessionData.screenAnalysis || null,
+                workflowDiagram: this.sessionData.workflowDiagram || null,
+                screenImages: screenSpecs.map(spec => ({
+                    screenName: spec.screenTitle,
+                    screenType: 'specification_only',
+                    purpose: spec.screenPurpose || `Specification for ${spec.screenTitle}`,
+                    imagePath: null,
+                    imageUrl: null,
+                    specification: spec,
+                    note: 'Canvas not available on Azure - specifications provided instead'
+                })),
+                summary: {
+                    totalScreens: screens.length,
+                    individualScreens: screenSpecs.length,
+                    successfulScreens: screenSpecs.length,
+                    failedScreens: 0,
+                    layoutTypes: ['specification_only'],
+                    generatedAt: new Date().toISOString(),
+                    status: 'completed',
+                    layoutType: 'specification_only',
+                    platformNote: 'Running on Azure - image generation disabled for compatibility'
+                }
+            };
+        }
         
         // FIX: Use screenAnalysis directly as an array
         const screens = this.sessionData.screenAnalysis;

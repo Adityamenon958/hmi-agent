@@ -4,7 +4,7 @@
   "description": "HMI Agent with React Frontend and Node.js Backend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "bash startup.sh",
     "build": "npm install && cd frontend && npm install --no-optional && npm run build",
     "build:simple": "cd frontend && npm install --no-optional && npm run build",
     "install-all": "npm install && cd frontend && npm install",
@@ -22,7 +22,6 @@
     "express-rate-limit": "^7.1.5",
     "compression": "^1.7.4",
     "express-session": "^1.17.3",
-    "sharp": "^0.32.6",
     "canvas": "^2.11.2",
     "mammoth": "^1.9.1",
     "docx4js": "^3.3.0",
