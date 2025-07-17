@@ -32,7 +32,7 @@ console.log('✅ All required environment variables are set');
 // const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 // ✅ Initialize HMI Agent
 const hmiAgent = new HMIAgent();

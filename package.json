@@ -8,7 +8,7 @@
     "build": "npm install && cd frontend && npm install --no-optional && npm run build",
     "build:simple": "cd frontend && npm install --no-optional && npm run build",
     "install-all": "npm install && cd frontend && npm install",
-    "postinstall": "cd frontend && npm install --no-optional",
+
     "dev": "concurrently \"npm run server\" \"cd frontend && npm start\"",
     "server": "nodemon server.js"
   },
