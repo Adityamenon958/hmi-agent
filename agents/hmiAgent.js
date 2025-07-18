@@ -6,14 +6,22 @@ const path = require('path');
 const { updateCostTracking } = require('../server.js');
 const OpenAI = require('openai');
 
-// ✅ Canvas with fallback for Azure compatibility
+// ✅ Canvas with enhanced Azure compatibility
 let createCanvas;
 try {
     const canvas = require('canvas');
     createCanvas = canvas.createCanvas;
-    console.log('✅ Canvas loaded successfully');
+    
+    // ✅ Test Canvas functionality
+    const testCanvas = createCanvas(100, 100);
+    const testCtx = testCanvas.getContext('2d');
+    testCtx.font = '12px Arial, sans-serif';
+    testCtx.fillText('Test', 10, 10);
+    
+    console.log('✅ Canvas loaded successfully with font rendering test');
 } catch (error) {
     console.log('⚠️ Canvas not available, using fallback mode');
+    console.log('Canvas error details:', error.message);
     createCanvas = null;
 }
 
@@ -27,6 +35,18 @@ class HMIAgent {
         this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
         this.sessionData = {}; // Store session data for multi-step process
         this.updateProgress = (step, message) => console.log(message);
+    }
+
+    // ✅ Helper function to safely set fonts with fallbacks
+    setFontSafely(ctx, fontString) {
+        try {
+            ctx.font = fontString;
+        } catch (fontError) {
+            // Fallback to system default sans-serif
+            const fallbackFont = fontString.replace(/Arial,?\s*/g, '').replace(/,\s*sans-serif/, '') || 'sans-serif';
+            ctx.font = fallbackFont;
+            console.log(`⚠️ Font fallback: ${fontString} → ${fallbackFont}`);
+        }
     }
 
     // ✅ Clear session data
@@ -4207,7 +4227,14 @@ async createScreenImage(screenSpec) {
 
     // 9️⃣ Optional: Draw header title
     if (screenSpec.layout?.header?.title) {
-        ctx.font = 'bold 24px Arial, sans-serif';
+        // ✅ Enhanced font fallback for Azure
+        try {
+            ctx.font = 'bold 24px Arial, sans-serif';
+        } catch (fontError) {
+            console.log('⚠️ Font fallback to system default');
+            ctx.font = 'bold 24px sans-serif';
+        }
+        
         ctx.fillStyle = screenSpec.layout.header.titleColor || '#ECF0F1';
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -4223,7 +4250,11 @@ async createScreenImage(screenSpec) {
     ctx.strokeRect(0, 0, 800, 600);
 
     // 🔍 Debug labels
-    ctx.font = 'bold 12px Arial, sans-serif';
+    try {
+        ctx.font = 'bold 12px Arial, sans-serif';
+    } catch (fontError) {
+        ctx.font = 'bold 12px sans-serif';
+    }
     ctx.fillStyle = '#0000ff';
     ctx.fillText("TOP → HEADER", 10, 15);
     ctx.fillText("BOTTOM → FOOTER", 10, 590);
@@ -4247,13 +4278,13 @@ async createScreenImage(screenSpec) {
         switch (element.type) {
             case 'header_title':
                 // Draw professional header title
-                ctx.font = `bold ${element.style?.fontSize || '24px'} Arial, sans-serif`;
+                this.setFontSafely(ctx, `bold ${element.style?.fontSize || '24px'} Arial, sans-serif`);
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'HMI Screen', pos.x, pos.y + 30);
                 
                 // Draw subtitle "CONTROL SYSTEM" in top right
-                ctx.font = 'bold 16px Arial, sans-serif';
+                this.setFontSafely(ctx, 'bold 16px Arial, sans-serif');
                 ctx.fillStyle = colorScheme.secondary;
                 ctx.textAlign = 'right';
                 ctx.fillText('CONTROL SYSTEM', 780, pos.y + 25);

@@ -18,7 +18,23 @@ apt-get install -y -qq \
     libgif-dev \
     librsvg2-dev \
     libpixman-1-dev \
-    pkg-config
+    pkg-config \
+    libfreetype6-dev \
+    libfontconfig1-dev \
+    fonts-liberation \
+    fonts-dejavu-core \
+    fonts-dejavu-extra \
+    ttf-dejavu \
+    fontconfig \
+    libharfbuzz-dev \
+    libfribidi-dev
+
+# ✅ Configure font rendering
+echo "🔤 Configuring font rendering..."
+fc-cache -fv
+mkdir -p /usr/share/fonts/truetype/dejavu
+ln -sf /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf /usr/share/fonts/truetype/dejavu/Arial.ttf
+ln -sf /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf /usr/share/fonts/truetype/dejavu/Arial-Bold.ttf
 
 # ✅ Check if node_modules exists
 if [ ! -d "node_modules" ]; then
