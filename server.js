@@ -314,14 +314,6 @@ app.post('/api/generate-workflow', upload.single('fdsDocument'), async (req, res
         
         updateProgress(sessionId, 'workflow', '✅ Workflow diagram generated successfully!');
         
-        // ✅ Store session data
-        const sessionData = {
-            sessionId,
-            workflowDiagram,
-            filePath: req.file.path,
-            originalName: req.file.originalname,
-            createdAt: new Date().toISOString()
-        };
         // ✅ Store workflow and screenAnalysis in session for screen generation
         progressSessions.set(sessionId, {
             workflowDiagram,
