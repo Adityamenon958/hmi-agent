@@ -19,7 +19,7 @@ ctx.fillRect(0, 600 - 60, 800, 60);
 
 // Label text
 ctx.fillStyle = '#ffffff';
-ctx.font = 'bold 24px Arial';
+ctx.font = 'bold 24px Arial, sans-serif';
 ctx.fillText('Header', 20, 40);
 ctx.fillText('Footer', 20, 590);
 

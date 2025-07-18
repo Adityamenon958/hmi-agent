@@ -4207,7 +4207,7 @@ async createScreenImage(screenSpec) {
 
     // 9️⃣ Optional: Draw header title
     if (screenSpec.layout?.header?.title) {
-        ctx.font = 'bold 24px Arial';
+        ctx.font = 'bold 24px Arial, sans-serif';
         ctx.fillStyle = screenSpec.layout.header.titleColor || '#ECF0F1';
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -4223,7 +4223,7 @@ async createScreenImage(screenSpec) {
     ctx.strokeRect(0, 0, 800, 600);
 
     // 🔍 Debug labels
-    ctx.font = 'bold 12px Arial';
+    ctx.font = 'bold 12px Arial, sans-serif';
     ctx.fillStyle = '#0000ff';
     ctx.fillText("TOP → HEADER", 10, 15);
     ctx.fillText("BOTTOM → FOOTER", 10, 590);
@@ -4247,13 +4247,13 @@ async createScreenImage(screenSpec) {
         switch (element.type) {
             case 'header_title':
                 // Draw professional header title
-                ctx.font = `bold ${element.style?.fontSize || '24px'} Arial`;
+                ctx.font = `bold ${element.style?.fontSize || '24px'} Arial, sans-serif`;
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'HMI Screen', pos.x, pos.y + 30);
                 
                 // Draw subtitle "CONTROL SYSTEM" in top right
-                ctx.font = 'bold 16px Arial';
+                ctx.font = 'bold 16px Arial, sans-serif';
                 ctx.fillStyle = colorScheme.secondary;
                 ctx.textAlign = 'right';
                 ctx.fillText('CONTROL SYSTEM', 780, pos.y + 25);
@@ -4268,7 +4268,7 @@ async createScreenImage(screenSpec) {
                 ctx.fillStyle = element.style?.backgroundColor || colorScheme.success;
                 ctx.fillRect(pos.x, pos.y, 20, 20);
                 
-                ctx.font = 'bold 12px Arial';
+                ctx.font = 'bold 12px Arial, sans-serif';
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'STATUS', pos.x + 30, pos.y + 15);
@@ -4280,7 +4280,7 @@ async createScreenImage(screenSpec) {
                 break;
                 
             case 'text':
-                ctx.font = element.style?.fontSize || '16px Arial';
+                ctx.font = element.style?.fontSize || '16px Arial, sans-serif';
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'Text', pos.x, pos.y + 20);
@@ -4292,7 +4292,7 @@ async createScreenImage(screenSpec) {
                 ctx.fillRect(pos.x, pos.y, pos.width, pos.height);
                 
                 // Draw button text
-                ctx.font = 'bold 14px Arial';
+                ctx.font = 'bold 14px Arial, sans-serif';
                 ctx.fillStyle = element.style?.color || '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.fillText(element.label || 'NAV', pos.x + pos.width/2, pos.y + pos.height/2 + 5);
@@ -4332,7 +4332,7 @@ async createScreenImage(screenSpec) {
                 ctx.fillRect(pos.x, pos.y, pos.width, pos.height);
                 
                 // Draw value
-                ctx.font = 'bold 16px Courier New';
+                ctx.font = 'bold 16px monospace';
                 ctx.fillStyle = element.style?.color || '#00FF00';
                 ctx.textAlign = 'center';
                 ctx.fillText(element.label || '0.00', pos.x + pos.width/2, pos.y + pos.height/2 + 6);
