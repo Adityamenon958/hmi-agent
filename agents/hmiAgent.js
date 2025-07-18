@@ -12,13 +12,23 @@ try {
     const canvas = require('canvas');
     createCanvas = canvas.createCanvas;
     
-    // ✅ Test Canvas functionality
+    // ✅ Test Canvas functionality with reliable font
     const testCanvas = createCanvas(100, 100);
     const testCtx = testCanvas.getContext('2d');
-    testCtx.font = '12px Arial, sans-serif';
+    
+    // ✅ Test with monospace font which is guaranteed to work
+    testCtx.font = '12px monospace';
     testCtx.fillText('Test', 10, 10);
     
-    console.log('✅ Canvas loaded successfully with font rendering test');
+    // ✅ Verify text was actually rendered
+    const imageData = testCtx.getImageData(10, 10, 50, 20);
+    const hasText = imageData.data.some(pixel => pixel > 0);
+    
+    if (hasText) {
+        console.log('✅ Canvas loaded successfully with working font rendering');
+    } else {
+        console.log('⚠️ Canvas loaded but text rendering may be problematic');
+    }
 } catch (error) {
     console.log('⚠️ Canvas not available, using fallback mode');
     console.log('Canvas error details:', error.message);
@@ -40,10 +50,21 @@ class HMIAgent {
     // ✅ Helper function to safely set fonts with fallbacks
     setFontSafely(ctx, fontString) {
         try {
+            // ✅ Try to set the requested font
             ctx.font = fontString;
+            
+            // ✅ Test if the font actually works by measuring text
+            const testText = 'Test';
+            const metrics = ctx.measureText(testText);
+            
+            // ✅ If text measurement fails or returns 0, use fallback
+            if (metrics.width === 0 || metrics.actualBoundingBoxAscent === 0) {
+                throw new Error('Font measurement failed');
+            }
+            
         } catch (fontError) {
-            // Fallback to system default sans-serif
-            const fallbackFont = fontString.replace(/Arial,?\s*/g, '').replace(/,\s*sans-serif/, '') || 'sans-serif';
+            // ✅ Fallback to monospace which is guaranteed to work
+            const fallbackFont = fontString.replace(/Arial,?\s*/g, 'monospace').replace(/,\s*sans-serif/, '') || 'monospace';
             ctx.font = fallbackFont;
             console.log(`⚠️ Font fallback: ${fontString} → ${fallbackFont}`);
         }
@@ -4278,13 +4299,13 @@ async createScreenImage(screenSpec) {
         switch (element.type) {
             case 'header_title':
                 // Draw professional header title
-                this.setFontSafely(ctx, `bold ${element.style?.fontSize || '24px'} Arial, sans-serif`);
+                this.setFontSafely(ctx, `bold ${element.style?.fontSize || '24px'} monospace`);
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'HMI Screen', pos.x, pos.y + 30);
                 
                 // Draw subtitle "CONTROL SYSTEM" in top right
-                this.setFontSafely(ctx, 'bold 16px Arial, sans-serif');
+                this.setFontSafely(ctx, 'bold 16px monospace');
                 ctx.fillStyle = colorScheme.secondary;
                 ctx.textAlign = 'right';
                 ctx.fillText('CONTROL SYSTEM', 780, pos.y + 25);
@@ -4311,7 +4332,7 @@ async createScreenImage(screenSpec) {
                 break;
                 
             case 'text':
-                ctx.font = element.style?.fontSize || '16px Arial, sans-serif';
+                ctx.font = element.style?.fontSize || '16px monospace';
                 ctx.fillStyle = element.style?.color || colorScheme.text;
                 ctx.textAlign = 'left';
                 ctx.fillText(element.label || 'Text', pos.x, pos.y + 20);
@@ -4323,7 +4344,7 @@ async createScreenImage(screenSpec) {
                 ctx.fillRect(pos.x, pos.y, pos.width, pos.height);
                 
                 // Draw button text
-                ctx.font = 'bold 14px Arial, sans-serif';
+                ctx.font = 'bold 14px monospace';
                 ctx.fillStyle = element.style?.color || '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.fillText(element.label || 'NAV', pos.x + pos.width/2, pos.y + pos.height/2 + 5);
