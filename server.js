@@ -389,11 +389,14 @@ app.post('/api/generate-screens', async (req, res) => {
         const result = await hmiAgent.generateScreenImages();
 
         updateProgress(sessionId, 'screen-generation', '✅ HMI screens generated successfully!');
+        
+        // ✅ Send completion via SSE with the result data
+        updateProgress(sessionId, 'complete', '🎉 Screen generation completed!', result);
 
+        // ✅ Send immediate response to avoid timeout
         res.json({
             success: true,
-            message: 'HMI screens generated successfully! 🎨',
-            data: result,
+            message: 'Screen generation started! 🎨',
             sessionId: sessionId,
             step: 2,
             nextStep: 'complete'
@@ -401,6 +404,9 @@ app.post('/api/generate-screens', async (req, res) => {
 
     } catch (error) {
         console.error('❌ Error generating screens:', error);
+        
+        // ✅ Send error via SSE
+        updateProgress(sessionId, 'error', `❌ Failed to generate screen images: ${error.message}`);
 
         res.status(500).json({
             error: 'Failed to generate screen images',

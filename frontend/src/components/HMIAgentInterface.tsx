@@ -32,7 +32,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 
 // ✅ API base URL for development vs production
-const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000';
+const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
 
 // ✅ NEW: Progress tracking interface
 interface ProgressMessage {
@@ -48,7 +48,9 @@ const ProgressTracker: React.FC<{
   sessionId: string | null;
   isVisible: boolean;
   onProgressUpdate?: (progress: ProgressMessage) => void;
-}> = ({ sessionId, isVisible, onProgressUpdate }) => {
+  onComplete?: (result: any) => void;
+  onError?: (error: string) => void;
+}> = ({ sessionId, isVisible, onProgressUpdate, onComplete, onError }) => {
   const [messages, setMessages] = useState<ProgressMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -71,6 +73,20 @@ const ProgressTracker: React.FC<{
         
         if (onProgressUpdate) {
           onProgressUpdate(progressData);
+        }
+        
+        // ✅ Handle completion
+        if (progressData.step === 'complete' && progressData.details) {
+          if (onComplete) {
+            onComplete(progressData.details);
+          }
+        }
+        
+        // ✅ Handle errors
+        if (progressData.step === 'error') {
+          if (onError) {
+            onError(progressData.message);
+          }
         }
       } catch (error) {
         console.error('Error parsing progress message:', error);
@@ -288,25 +304,34 @@ const HMIAgentInterface: React.FC = () => {
     }
   };
 
-  // ✅ Step 2: Generate screens (UPDATED - removed screen count step)
+  // ✅ Step 2: Generate screens (FIXED - No timeout issues)
   const generateScreens = async () => {
     if (!sessionId) return;
 
     setIsProcessing(true);
     setError(null);
 
+    // ✅ FIXED: Don't make a synchronous API call - let SSE handle everything
+    // The backend will process and send progress updates via SSE
+    // When complete, the ProgressTracker will handle the result
+    
+    // ✅ Just trigger the backend processing (it will handle itself via SSE)
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/generate-screens`, {
+      // ✅ Make a quick call to start the process (this won't timeout)
+      await axios.post(`${API_BASE_URL}/api/generate-screens`, {
         sessionId,
+      }, {
+        timeout: 5000 // 5 second timeout for the initial call
       });
-
-      setGenerationResult(response.data.data);
-      // ✅ FIXED: Keep at step 1 to show results with workflow
-      // setCurrentStep(2); // This was causing the display to disappear
+      
+      // ✅ The actual processing and result will come via SSE
+      // No need to wait for response here
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to generate screens');
-    } finally {
-      setIsProcessing(false);
+      // ✅ Only show error if it's not a timeout (timeout is expected)
+      if (err.code !== 'ECONNABORTED') {
+        setError(err.response?.data?.error || 'Failed to start screen generation');
+      }
+      // ✅ Don't set isProcessing to false - let SSE handle completion
     }
   };
 
@@ -349,6 +374,16 @@ const HMIAgentInterface: React.FC = () => {
         isVisible={isProcessing}
         onProgressUpdate={(progress) => {
           console.log('Progress update:', progress);
+        }}
+        onComplete={(result) => {
+          console.log('Generation completed:', result);
+          setGenerationResult(result);
+          setIsProcessing(false);
+        }}
+        onError={(error) => {
+          console.error('Generation error:', error);
+          setError(error);
+          setIsProcessing(false);
         }}
       />
 

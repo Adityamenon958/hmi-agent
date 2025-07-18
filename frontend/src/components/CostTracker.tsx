@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // ✅ API base URL for development vs production
-const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000';
+const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
 
 interface CostData {
   totalCost: string;
